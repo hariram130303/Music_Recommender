@@ -94,7 +94,7 @@ The project employs the following methodologies:
    ```bash
    cd Music-Recommendation-System
    ```
-4. **Unaip the "data" directory to:**:
+4. **Unzip the "data" directory to**:
    a. notebook
    b. scripts
 
