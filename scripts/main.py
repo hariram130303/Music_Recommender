@@ -24,7 +24,7 @@ about = 'http://localhost:8502'
 if st.sidebar.button('About System'):
     webbrowser.open_new_tab(about)
 
-All_Tracks = 'http://localhost:8504'
+All_Tracks = 'http://localhost:8503'
 if st.sidebar.button('All Tracks'):
     webbrowser.open_new_tab(All_Tracks)
 
