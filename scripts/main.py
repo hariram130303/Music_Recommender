@@ -20,19 +20,19 @@ def recommend(musics):
 
 
 st.sidebar.title("Menu")
-about = 'http://localhost:8501'
+about = 'http://localhost:8502'
 if st.sidebar.button('About System'):
     webbrowser.open_new_tab(about)
 
-All_Tracks = 'http://localhost:8503'
+All_Tracks = 'http://localhost:8504'
 if st.sidebar.button('All Tracks'):
     webbrowser.open_new_tab(All_Tracks)
 
 st.title( " Music Recommender system " )
 st.text('P-92(Group-6)')
-music = pickle.load(open('music.pkl', 'rb'))
+music = pickle.load(open('../notebook/music.pkl', 'rb'))
 musicdf= pd.DataFrame(music)
-similarity = pickle.load(open('similarity.pkl', 'rb'))
+similarity = pickle.load(open('../notebook/similarity.pkl', 'rb'))
 
 music_list = musicdf['Track_Name'].values
 selected_music_name = st.selectbox("Search Music: Type or Select a Music from the Dropdown", music_list)

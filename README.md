@@ -1,5 +1,5 @@
 
-![Screenshot](https://github.com/hariram130303/Music_Recommender/assets/Screenshot.jpg)
+![Screenshot](https://github.com/user-attachments/assets/eb2191f5-23bd-44e4-abdb-eae3b629e3b2)
 
 # Music Recommendation System
 
