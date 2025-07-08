@@ -1,63 +1,74 @@
 import streamlit as st
 import pickle
 import pandas as pd
-import webbrowser
 
-# Load models
+# Load data
 music = pickle.load(open('music.pkl', 'rb'))
 musicdf = pd.DataFrame(music)
 similarity = pickle.load(open('similarity.pkl', 'rb'))
 
+# Helper function to convert Spotify URI to a web URL
+def uri_to_url(uri):
+    if isinstance(uri, str) and uri.startswith("spotify:track:"):
+        track_id = uri.split(":")[-1]
+        return f"https://open.spotify.com/track/{track_id}"
+    return "#"
+
 # Sidebar navigation
-st.sidebar.title("Navigation")
+st.sidebar.title("🎵 Navigation")
 page = st.sidebar.radio("Go to", ["Home", "About", "All Tracks"])
 
+# About Page
 if page == "About":
-    st.title("About System")
-    st.write("Here, the system uses your likes in order to recommend you with things that you might like. It uses the information provided by you over the dropdown and the ones it is able to gather and then it curate recommendations according to that")
-    st.header("Working :")
-    st.write("1. Type or Select a Music from Dropdown ")
-    st.write("2. Click (Get Recommendations) Button")
-    st.write("3. It will Recommend you Top 10 Music Tracks ")
-    st.write("4. Click on URL of any Music Tracks ")
-    st.write("5. It will direct you to the Spotify")
-    st.write("6. You can also have a look on (All Tracks) in the sidebar")
-    st.write("7. If you want to know about how the system works then click a button called (All Tracks) on the sidebar ")
+    st.title("ℹ️ About This Recommender System")
+    st.write("""
+    This system recommends music tracks based on your selected favorite.  
+    It uses content-based filtering via cosine similarity between track features.
+    """)
+    
+    st.subheader("📌 How It Works:")
+    st.markdown("""
+    1. **Select a track** from the dropdown list.  
+    2. **Click "Get Recommendations"** to generate suggestions.  
+    3. Each recommendation shows a **Spotify link** and an optional **audio preview**.  
+    4. Explore all available tracks using the **"All Tracks"** tab.  
+    """)
 
-
+# All Tracks Page
 elif page == "All Tracks":
     st.title("🎶 All Available Tracks")
-    st.dataframe(musicdf, 3000, 500)
+    st.dataframe(musicdf[['Track_Name', 'Artist_Name', 'Track_URI']], height=600)
 
+# Home Page (Recommendation System)
 else:
     st.title("🎧 Music Recommender System")
-    st.text('P-92 (Group-6)')
+    st.markdown("_P-92 (Group-6)_")
 
-    no_recommend = st.sidebar.slider('How many Recommendations?', 5, 20, 5)
+    # Sidebar controls
+    no_recommend = st.sidebar.slider('Number of Recommendations', 5, 20, 5)
     music_list = musicdf['Track_Name'].values
-    selected_music_name = st.selectbox("Search or Select a Music Track", music_list)
+    selected_music_name = st.selectbox("🎼 Select a Music Track", music_list)
 
-    def recommend(musics):
-        index = musicdf[musicdf['Track_Name'] == musics].index[0]
+    # Recommendation function
+    def recommend(track_name):
+        index = musicdf[musicdf['Track_Name'] == track_name].index[0]
         distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
-        recommended_music_names = []
-        for i in distances[:no_recommend]:
-            recommended_music_names.append(musicdf.iloc[i[0]].Track_Name)
-        return recommended_music_names
-    
-    # Function to open Spotify URI
-    def open_spotify_uri(uri):
-        if uri.startswith("spotify:track:"):
-            track_id = uri.split(":")[-1]
-            webbrowser.open(f"https://open.spotify.com/track/{track_id}")
-        else:
-            print("Invalid Spotify track URI")
+        recommended = []
+        for i in distances[1:no_recommend + 1]:  # skip the first (same song)
+            recommended.append(musicdf.iloc[i[0]])
+        return recommended
 
-
-    if st.button('Get Recommendations'):
+    # Recommendation Output
+    if st.button('🚀 Get Recommendations'):
         recommendations = recommend(selected_music_name)
-        for name in recommendations:
-            index_no = musicdf[musicdf["Track_Name"] == name].index[0]
-            uri = musicdf['Track_URI'][index_no] if 'Track_URI' in musicdf.columns else 'N/A'
-            preview = musicdf['Track_Preview'][index_no] if 'Track_Preview' in musicdf.columns else 'No preview available'
-            st.markdown(f"**{name}**  \n[🔗 Listen on Spotify]({open_spotify_uri(uri)})  \n🎧 Preview: {preview}")
+        for track in recommendations:
+            name = track['Track_Name']
+            uri = track.get('Track_URI', 'N/A')
+            preview = track.get('Track_Preview', 'No preview available')
+            url = uri_to_url(uri)
+
+            st.markdown(f"""
+            **🎵 {name}**  
+            🔗 [Listen on Spotify]({url})  
+            🎧 Preview: {preview if preview != 'No preview available' else '*Not available*'}
+            """)
