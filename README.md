@@ -102,12 +102,20 @@ The project employs the following methodologies:
    ```bash
    pip install -r requirements.txt
    ```
-5. **Run the application**:
+5.**Run the Notebook**:
+  ```bash
+   cd notebook
+  ```
+  *After running notebook move the pickle files to the scripts directory.* 
+  
+6. **Run the application**:
    ```bash
+   cd streamlit
    streamlit run app.py
    ```
-6. **Running the Streamlit app**:
+7. **Running the Streamlit app**:
    ```bash
+   cd scripts
    streamlit run main.py
    ```
 
