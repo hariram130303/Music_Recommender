@@ -106,7 +106,7 @@ The project employs the following methodologies:
   ```bash
    cd notebook
   ```
-  *After running notebook move the pickle files to the scripts directory.* 
+*After running notebook move the pickle files to the scripts directory.* 
   
 6. **Run the application**:
    ```bash
